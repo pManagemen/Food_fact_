@@ -7,8 +7,8 @@ app.use(cors());
 
 // Koneksi pakai env
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ MongoDB Error:', err));
+  .then(() => console.log('berjalan'))
+  .catch(err => console.error('error:', err));
 
 // Schema
 const makananSchema = new mongoose.Schema({
@@ -34,4 +34,4 @@ app.get('/api/reviews', async (req, res) => {
 
 // Gunakan PORT dari Railway
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`berhasil  ${PORT}`));
