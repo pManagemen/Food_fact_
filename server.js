@@ -5,10 +5,12 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 
-mongoose.connect('mongodb+srv://oak:code98932@cluster0.qgdsza7.mongodb.net/food_fact?retryWrites=true&w=majority&appName=Cluster0')
+// Koneksi pakai env
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch(err => console.error('❌ MongoDB Error:', err));
 
+// Schema
 const makananSchema = new mongoose.Schema({
   nama_makanan: String,
   kalori: Number,
@@ -19,7 +21,7 @@ const makananSchema = new mongoose.Schema({
   kategori: String
 });
 
-const Makanan = mongoose.model('Makanan', makananSchema, 'review'); // gunakan collection 'review'
+const Makanan = mongoose.model('Makanan', makananSchema, 'review');
 
 app.get('/api/reviews', async (req, res) => {
   try {
@@ -30,5 +32,6 @@ app.get('/api/reviews', async (req, res) => {
   }
 });
 
+// Gunakan PORT dari Railway
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
