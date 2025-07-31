@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Makanan - MongoDB Viewer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #searchInput {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      padding: 10px;
+      font-size: 16px;
+      display: block;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin: 10px auto;
+      max-width: 600px;
+    }
+
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .not-found {
+      text-align: center;
+      color: #999;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Daftar Makanan</h1>
+  <input type="text" id="searchInput" placeholder="Cari nama makanan atau kategori...">
+  <div id="reviewContainer"></div>
+
+  <script>
+    const searchInput = document.getElementById('searchInput');
+    const container = document.getElementById('reviewContainer');
+    let reviewsData = [];
+
+    // Ambil data dari server
+    fetch('http://localhost:3000/api/reviews')
+      .then(res => res.json())
+      .then(data => {
+        reviewsData = data;
+        renderReviews(reviewsData);
+      })
+      .catch(error => {
+        container.innerHTML = '<p class="not-found">Gagal memuat data dari server.</p>';
+        console.error('Error:', error);
+      });
+
+    // Tampilkan review ke halaman
+    function renderReviews(data) {
+      container.innerHTML = '';
+
+      if (data.length === 0) {
+        container.innerHTML = '<p class="not-found">Tidak ada hasil ditemukan.</p>';
+        return;
+      }
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>${item.nama_makanan || '(Tanpa Nama)'}</h3>
+          <p><strong>Kategori:</strong> ${item.kategori || '-'}</p>
+          <p>Kalori: ${item.kalori ?? '-'} | Lemak: ${item.lemak ?? '-'} | Gula: ${item.gula ?? '-'}</p>
+          <p>Protein: ${item.protein ?? '-'} | Serat: ${item.serat ?? '-'}</p>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Fitur pencarian
+    searchInput.addEventListener('input', function () {
+      const keyword = this.value.toLowerCase();
+      const filtered = reviewsData.filter(item =>
+        (item.nama_makanan || '').toLowerCase().includes(keyword) ||
+        (item.kategori || '').toLowerCase().includes(keyword)
+      );
+      renderReviews(filtered);
+    });
+  </script>
+
+</body>
+</html>
